@@ -52,8 +52,8 @@ CMD ["/usr/local/bin/apache-foreground"]
 ####
 ## These are not specifically SilverStripe related and could be removed on a more optimised image
 
-# Ruby, RubyGems, Bundler
-RUN apt-get -qqy install -t stable ruby
+# Ruby, RubyGems, Bundler, development tools to compile Ruby modules
+RUN apt-get -qqy install -t stable ruby ruby-dev build-essential
 RUN gem install bundler
 RUN gem install compass
 

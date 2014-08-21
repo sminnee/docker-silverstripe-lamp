@@ -42,17 +42,17 @@ a command. In this example, we map port 3000 to the HTTP port of the container.
 
 ## Vagrant
 
-If you're using Vagrant, there's a basic `Vagrantfile` available that uses the [Vagrant docker provider](https://docs.vagrantup.com/v2/docker/basics.html).
-This is especially useful for OS X, as there's no native way to run containers yet.
+If you're using Vagrant, a basic `Vagrantfile` is provided that uses the [Vagrant docker provider](https://docs.vagrantup.com/v2/docker/basics.html). This is especially useful for
+OS X, as there's currently no way to natively run containers.
 
 Run this command from within the directory where you cloned this repo:
 
 	vagrant up --provider=docker
 
-This will create a default host VM (if one isn't currently running) and install `docker` on it to host the
-container, then it will instruct the host VM to setup a docker container from the `Dockerfile`.
+This will create a default host VM (if one isn't currently running) and install `docker` on it. This
+VM will be the host to the new docker container.
 
-You can control the host VM by using [`vagrant global-status` commands](https://docs.vagrantup.com/v2/cli/global-status.html).
+Once the host VM and container have started, you can check they are running using [`vagrant global-status](https://docs.vagrantup.com/v2/cli/global-status.html) and the usual [vagrant commands](https://docs.vagrantup.com/v2/cli/index.html) to
+control them.
 
-[Vagrant docker configuration commands](https://docs.vagrantup.com/v2/docker/configuration.html) are available for customising the `Vagrantfile`,
-for example, you may want to use a different host image, rather than the default.
+[Vagrant docker configuration commands](https://docs.vagrantup.com/v2/docker/configuration.html) are available for customising the `Vagrantfile`. For example, you may want to use a different host image, rather than the default.

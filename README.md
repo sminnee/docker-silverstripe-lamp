@@ -1,7 +1,9 @@
-Docker image: sminnee/silverstripe-lamp
-=======================================
+[sminnee/silverstripe-lamp](https://registry.hub.docker.com/u/sminnee/silverstripe-lamp/)
+=========================
+Docker image
+------------
 
-This is the source of a Docker image fro
+This is the source of a Docker image that you can use to do a number of SilverStripe-related things:
 
  * Run a LAMP stack suitable for SilverStripe (including an internal database)
  * Uses Debian Wheezy with Backports
@@ -38,3 +40,12 @@ a command. In this example, we have mapped port 3000 to the HTTP port of the con
     docker run -dP -p 3000:80 -v $build_dir:/var/www sminnee/silverstripe-lamp
 
 **Note:** This is for development purposes only; the root database user has no password.
+
+Development
+-----------
+
+To rebuild this image locally, use the Makefile included:
+
+    git clone https://github.com/sminnee/docker-silverstripe-lamp.git
+    cd docker-silverstripe-lamp
+    make

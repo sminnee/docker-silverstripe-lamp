@@ -6,57 +6,62 @@ MAINTAINER Sam Minnee <sam@silverstripe.com>
 # BASE wheezy-backports O/S with some helpful tools
 RUN echo "deb http://ftp.us.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get -qq update
-RUN apt-get -qqy install sudo wget lynx telnet nano curl
+
+RUN apt-get -qqy install sudo wget lynx telnet nano curl make git-core locales
+
+RUN echo "LANG=en_US.UTF-8\n" > /etc/default/locale && \
+	echo "en_US.UTF-8 UTF-8\n" > /etc/locale.gen && \
+	locale-gen
 
 # Known hosts
-ADD known-hosts /root/.ssh/known-hosts
+ADD known_hosts /root/.ssh/known_hosts
 
-# APACHE
-RUN apt-get -qqy install apache2
+# APACHE, MYSQL, PHP & SUPPORT TOOLS
+RUN apt-get -qqy install apache2 mysql-server-5.5 \
+	php5-cli libapache2-mod-php5 php5-mysqlnd php5-mcrypt php5-tidy php5-curl php5-gd php-pear
 
-# MYSQL
-RUN apt-get -qqy install mysql-server-5.5
-
-# PHP AND SUPPORT TOOLS
-RUN apt-get -qqy install php5-cli libapache2-mod-php5 php5-mysql php5-mcrypt php5-tidy php5-curl php5-gd php-pear
-
-#  - Phpunit
-RUN wget https://phar.phpunit.de/phpunit-3.7.37.phar
-RUN chmod +x phpunit-3.7.37.phar
-RUN mv phpunit-3.7.37.phar /usr/local/bin/phpunit
-
-#  - Composer
-RUN wget https://getcomposer.org/composer.phar
-RUN chmod +x composer.phar
-RUN mv composer.phar /usr/local/bin/composer
-
-#  - Phing
-RUN pear channel-discover pear.phing.info
-RUN pear install phing/phing
+#  - Phpunit, Composer, Phing
+RUN wget https://phar.phpunit.de/phpunit-3.7.37.phar && \
+	chmod +x phpunit-3.7.37.phar && \
+	mv phpunit-3.7.37.phar /usr/local/bin/phpunit && \
+	wget https://getcomposer.org/composer.phar && \
+	chmod +x composer.phar && \
+	mv composer.phar /usr/local/bin/composer && \
+	pear channel-discover pear.phing.info && \
+	pear install phing/phing
 
 # SilverStripe Apache Configuration
-RUN a2enmod rewrite
-RUN rm /var/www/index.html
-RUN echo "date.timezone = Pacific/Auckland" > /etc/php5/conf.d/timezone.ini
+RUN a2enmod rewrite && \
+	rm /var/www/index.html && \
+	echo "date.timezone = Pacific/Auckland" > /etc/php5/conf.d/timezone.ini
 
 ADD apache-foreground /usr/local/bin/apache-foreground
 ADD apache-default-vhost /etc/apache2/sites-available/default
 ADD _ss_environment.php /var/_ss_environment.php
 
+####
+## These are not specifically SilverStripe related and could be removed on a more optimised image
+
+# Ruby, RubyGems, Bundler
+RUN apt-get -qqy install -t stable ruby ruby-dev && \
+	gem install bundler && \
+	gem install compass
+
+# NodeJS
+# A bit of mucking about to get it running without TTY
+RUN apt-get -qqy install nodejs-legacy && \
+	curl --insecure https://www.npmjs.org/install.sh > /tmp/npm-install.sh && \
+	chmod +x /tmp/npm-install.sh && \
+	clean=yes /tmp/npm-install.sh && \
+	rm /tmp/npm-install.sh && \
+	npm install -g grunt-cli gulp bower
+
+####
+## Commands and ports	
 EXPOSE 80
 
 # Run apache in foreground mode, because Docker needs a foreground
 WORKDIR /var/www
 CMD ["/usr/local/bin/apache-foreground"]
 
-####
-## These are not specifically SilverStripe related and could be removed on a more optimised image
-
-# Ruby, RubyGems, Bundler
-RUN apt-get -qqy install -t stable ruby
-RUN gem install bundler
-RUN gem install compass
-
-# NodeJS
-apt-get install nodejs-legacy
-curl --insecure https://www.npmjs.org/install.sh | bash
+ENV LANG en_US.UTF-8

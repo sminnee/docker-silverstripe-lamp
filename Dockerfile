@@ -43,17 +43,13 @@ ADD _ss_environment.php /var/_ss_environment.php
 ## These are not specifically SilverStripe related and could be removed on a more optimised image
 
 # Ruby, RubyGems, Bundler
-RUN apt-get -qqy install -t stable ruby ruby-dev && \
+RUN apt-get -qqy install ruby ruby-dev && \
 	gem install bundler && \
 	gem install compass
 
-# NodeJS
-# A bit of mucking about to get it running without TTY
-RUN apt-get -qqy install nodejs-legacy && \
-	curl --insecure https://www.npmjs.org/install.sh > /tmp/npm-install.sh && \
-	chmod +x /tmp/npm-install.sh && \
-	clean=yes /tmp/npm-install.sh && \
-	rm /tmp/npm-install.sh && \
+# NodeJS and common global NPM modules
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+	apt-get install -qqy nodejs && \
 	npm install -g grunt-cli gulp bower
 
 ####

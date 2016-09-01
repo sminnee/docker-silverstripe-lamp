@@ -31,7 +31,7 @@ Usage
 To run a build comment, mount your SilverStrpe root as `/var/www` and execute commands there:
 
     build_dir=`pwd`
-    docker run -v $build_dir:/var/www sminnee/silverstripe-lamp -c 'composer install; phpunit'
+    docker run -v $build_dir:/var/www sminnee/silverstripe-lamp bash -c 'composer install; phpunit'
 
 To run a working instance of your SilverStripe code on a fresh database, run the image without
 a command. In this example, we have mapped port 3000 to the HTTP port of the container.

@@ -1,10 +1,8 @@
-FROM debian:wheezy
+FROM debian:jessie
 MAINTAINER Sam Minnee <sam@silverstripe.com>
 
 ### SET UP
 
-# BASE wheezy-backports O/S with some helpful tools
-RUN echo "deb http://ftp.us.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get -qq update
 
 RUN apt-get -qqy install sudo wget lynx telnet nano curl make git-core locales
@@ -17,7 +15,7 @@ RUN echo "LANG=en_US.UTF-8\n" > /etc/default/locale && \
 ADD known_hosts /root/.ssh/known_hosts
 
 # APACHE, MYSQL, PHP & SUPPORT TOOLS
-RUN apt-get -qqy install apache2 mysql-server-5.5 \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -qqy install apache2 mysql-server \
 	php5-cli libapache2-mod-php5 php5-mysqlnd php5-mcrypt php5-tidy php5-curl php5-gd php-pear
 
 #  - Phpunit, Composer, Phing
@@ -32,28 +30,25 @@ RUN wget https://phar.phpunit.de/phpunit-3.7.37.phar && \
 
 # SilverStripe Apache Configuration
 RUN a2enmod rewrite && \
-	rm /var/www/index.html && \
-	echo "date.timezone = Pacific/Auckland" > /etc/php5/conf.d/timezone.ini
+	rm -r /var/www/html && \
+	echo "date.timezone = Pacific/Auckland" > /etc/php5/apache2/conf.d/timezone.ini && \
+	echo "date.timezone = Pacific/Auckland" > /etc/php5/cli/conf.d/timezone.ini
 
 ADD apache-foreground /usr/local/bin/apache-foreground
-ADD apache-default-vhost /etc/apache2/sites-available/default
+ADD apache-default-vhost /etc/apache2/sites-available/000-default.conf
 ADD _ss_environment.php /var/_ss_environment.php
 
 ####
 ## These are not specifically SilverStripe related and could be removed on a more optimised image
 
 # Ruby, RubyGems, Bundler
-RUN apt-get -qqy install -t stable ruby ruby-dev && \
+RUN apt-get -qqy install -t stable ruby ruby-dev gcc && \
 	gem install bundler && \
 	gem install compass
 
-# NodeJS
-# A bit of mucking about to get it running without TTY
-RUN apt-get -qqy install nodejs-legacy && \
-	curl --insecure https://www.npmjs.org/install.sh > /tmp/npm-install.sh && \
-	chmod +x /tmp/npm-install.sh && \
-	clean=yes /tmp/npm-install.sh && \
-	rm /tmp/npm-install.sh && \
+# NodeJS and common global NPM modules
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - && \
+	apt-get install -qqy nodejs && \
 	npm install -g grunt-cli gulp bower
 
 ####

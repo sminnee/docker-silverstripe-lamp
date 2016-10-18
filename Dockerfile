@@ -5,7 +5,7 @@ MAINTAINER Sam Minnee <sam@silverstripe.com>
 
 RUN apt-get -qq update
 
-RUN apt-get -qqy install sudo wget lynx telnet nano curl make git-core locales
+RUN apt-get -qqy install sudo wget lynx telnet nano curl make git-core locales bzip2
 
 RUN echo "LANG=en_US.UTF-8\n" > /etc/default/locale && \
 	echo "en_US.UTF-8 UTF-8\n" > /etc/locale.gen && \

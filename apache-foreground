@@ -1,12 +1,23 @@
 #!/bin/bash  
-echo "Starting MySQL..."
-/etc/init.d/mysql start
 
-echo "Running dev/build..."
-cd /var/www
-sudo -u www-data ./framework/sake dev/build
+# Only start database if NO_DB is not passed
+if [ -z ${NO_DB+x} ]; then
+	echo "Starting MySQL..."
+	/etc/init.d/mysql start
+else
+	echo "Running without DB..."
+fi
 
-echo "Starting apache..."
+# Only start database if NO_DEV_BUILD is not passed
+if [ -z ${NO_DEV_BUILD+x} ]; then
+	echo "Running dev/build..."
+	cd /var/www
+	sudo -u www-data ./framework/sake dev/build
+else
+	echo "Running without dev/build..."
+fi
+
+echo "Starting Apache..."
 apache2ctl start
 
 echo "Showing access.log..."

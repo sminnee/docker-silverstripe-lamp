@@ -18,7 +18,7 @@ ADD known_hosts /root/.ssh/known_hosts
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qqy install apache2 mysql-server \
 	php5-cli libapache2-mod-php5 php5-mysqlnd php5-mcrypt php5-tidy php5-curl php5-gd php-pear
 
-#  - Phpunit, Composer, Phing
+#  - Phpunit, Composer, Phing, SSPak
 RUN wget https://phar.phpunit.de/phpunit-3.7.37.phar && \
 	chmod +x phpunit-3.7.37.phar && \
 	mv phpunit-3.7.37.phar /usr/local/bin/phpunit && \
@@ -26,7 +26,8 @@ RUN wget https://phar.phpunit.de/phpunit-3.7.37.phar && \
 	chmod +x composer.phar && \
 	mv composer.phar /usr/local/bin/composer && \
 	pear channel-discover pear.phing.info && \
-	pear install phing/phing
+	pear install phing/phing && \
+	curl -sS https://silverstripe.github.io/sspak/install | php -- /usr/local/bin
 
 # SilverStripe Apache Configuration
 RUN a2enmod rewrite && \

@@ -39,6 +39,12 @@ a command. In this example, we have mapped port 3000 to the HTTP port of the con
     build_dir=`pwd`
     docker run -dP -p 3000:80 -v $build_dir:/var/www sminnee/silverstripe-lamp
 
+If you intend to use a separate container for your database, or don't require `dev/build` to be run,
+you can pass some environment variables to turn those features off:
+
+	build_dir=`pwd`
+	docker run -dP -p 3000:80 -e NO_DB=1 NO_DEV_BUILD=1 -v $build_dir:/var/www sminnee/silverstripe-lamp
+
 **Note:** This is for development purposes only; the root database user has no password.
 
 Development

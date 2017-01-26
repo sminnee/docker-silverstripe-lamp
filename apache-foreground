@@ -20,5 +20,5 @@ fi
 echo "Starting Apache..."
 apache2ctl start
 
-echo "Showing access.log..."
-tail -f /var/log/apache2/access.log
+echo "Showing logs..."
+tail -f /var/log/apache2/*.log

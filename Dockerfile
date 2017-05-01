@@ -56,6 +56,8 @@ RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - && \
 ## Commands and ports	
 EXPOSE 80
 
+VOLUME /var/www
+
 # Run apache in foreground mode, because Docker needs a foreground
 WORKDIR /var/www
 CMD ["/usr/local/bin/apache-foreground"]
